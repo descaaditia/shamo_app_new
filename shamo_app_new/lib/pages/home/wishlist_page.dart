@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shamo_app_new/providers/wishlist_provider.dart';
 import 'package:shamo_app_new/theme.dart';
 import 'package:shamo_app_new/widgets/wishlist_card.dart';
 
@@ -7,6 +9,8 @@ class WishlistPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WishlistProvider wishlistProvider = Provider.of<WishlistProvider>(context);
+
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -19,65 +23,65 @@ class WishlistPage extends StatelessWidget {
       );
     }
 
-    // Widget emptyWishList() {
-    //   return Expanded(
-    //     child: Container(
-    //       color: backgroundColor3,
-    //       width: double.infinity,
-    //       child: Column(
-    //         mainAxisAlignment: MainAxisAlignment.center,
-    //         children: [
-    //           Image.asset(
-    //             'assets/image_wishlist.png',
-    //             width: 74,
-    //           ),
-    //           SizedBox(
-    //             height: 23,
-    //           ),
-    //           Text(
-    //             " You don't have dream shoes?",
-    //             style: primaryTextStyle.copyWith(
-    //               fontSize: 16,
-    //               fontWeight: medium,
-    //             ),
-    //           ),
-    //           SizedBox(
-    //             height: 12,
-    //           ),
-    //           Text(
-    //             "Let's find your favorite shoes",
-    //             style: secondaryTextStyle,
-    //           ),
-    //           SizedBox(
-    //             height: 20,
-    //           ),
-    //           Container(
-    //             child: TextButton(
-    //               style: TextButton.styleFrom(
-    //                 padding: EdgeInsets.symmetric(
-    //                   vertical: 10,
-    //                   horizontal: 24,
-    //                 ),
-    //                 foregroundColor: primaryColor,
-    //                 shape: RoundedRectangleBorder(
-    //                   borderRadius: BorderRadius.circular(12),
-    //                 ),
-    //               ),
-    //               onPressed: () {},
-    //               child: Text(
-    //                 'Explore Store',
-    //                 style: primaryTextStyle.copyWith(
-    //                   fontSize: 16,
-    //                   fontWeight: medium,
-    //                 ),
-    //               ),
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   );
-    // }
+    Widget emptyWishList() {
+      return Expanded(
+        child: Container(
+          color: backgroundColor3,
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/image_wishlist.png',
+                width: 74,
+              ),
+              SizedBox(
+                height: 23,
+              ),
+              Text(
+                " You don't have dream shoes?",
+                style: primaryTextStyle.copyWith(
+                  fontSize: 16,
+                  fontWeight: medium,
+                ),
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Text(
+                "Let's find your favorite shoes",
+                style: secondaryTextStyle,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 24,
+                    ),
+                    backgroundColor: primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {},
+                  child: Text(
+                    'Explore Store',
+                    style: primaryTextStyle.copyWith(
+                      fontSize: 16,
+                      fontWeight: medium,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     Widget content() {
       return Expanded(
@@ -87,11 +91,17 @@ class WishlistPage extends StatelessWidget {
             padding: EdgeInsets.symmetric(
               horizontal: deafultMargin,
             ),
-            children: [
-              WishlistCard(),
-              WishlistCard(),
-              WishlistCard(),
-            ],
+
+            children: wishlistProvider.wishlist
+                .map(
+                  (product) => WishlistCard(product),
+                )
+                .toList(),
+            // children: [
+            //   WishlistCard(),
+            //   WishlistCard(),
+            //   WishlistCard(),
+            // ],
           ),
         ),
       );
@@ -100,8 +110,7 @@ class WishlistPage extends StatelessWidget {
     return Column(
       children: [
         header(),
-        // emptyWishList(),
-        content(),
+        wishlistProvider.wishlist.length == 0 ? emptyWishList() : content(),
       ],
     );
   }

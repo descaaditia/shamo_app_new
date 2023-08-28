@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shamo_app_new/providers/cart_provider.dart';
 import 'package:shamo_app_new/theme.dart';
 import 'package:shamo_app_new/widgets/cart_card.dart';
 
@@ -7,6 +9,7 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    CartProvider cartProvider = Provider.of<CartProvider>(context);
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -16,69 +19,74 @@ class CartPage extends StatelessWidget {
       );
     }
 
-    // Widget emptyCart() {
-    //   return Center(
-    //     child: Column(
-    //       mainAxisAlignment: MainAxisAlignment.center,
-    //       children: [
-    //         Image.asset(
-    //           'assets/icon_empty_cart.png',
-    //           width: 80,
-    //         ),
-    //         SizedBox(
-    //           height: 20,
-    //         ),
-    //         Text(
-    //           'Opss! Your Cart is Empty',
-    //           style: primaryTextStyle.copyWith(
-    //             fontSize: 16,
-    //             fontWeight: medium,
-    //           ),
-    //         ),
-    //         SizedBox(
-    //           height: 12,
-    //         ),
-    //         Text(
-    //           "Let's find your favorite shoes",
-    //           style: secondaryTextStyle,
-    //         ),
-    //         Container(
-    //           width: 152,
-    //           height: 44,
-    //           margin: EdgeInsets.only(top: 20),
-    //           child: TextButton(
-    //             onPressed: () {
-    //               Navigator.pushNamedAndRemoveUntil(
-    //                   context, '/home', (route) => false);
-    //             },
-    //             style: TextButton.styleFrom(
-    //               backgroundColor: primaryColor,
-    //               shape: RoundedRectangleBorder(
-    //                 borderRadius: BorderRadius.circular(12),
-    //               ),
-    //             ),
-    //             child: Text(
-    //               'Explore Store',
-    //               style: primaryTextStyle.copyWith(
-    //                 fontSize: 16,
-    //                 fontWeight: medium,
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   );
-    // }
+    Widget emptyCart() {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/icon_empty_cart.png',
+              width: 80,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Text(
+              'Opss! Your Cart is Empty',
+              style: primaryTextStyle.copyWith(
+                fontSize: 16,
+                fontWeight: medium,
+              ),
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            Text(
+              "Let's find your favorite shoes",
+              style: secondaryTextStyle,
+            ),
+            Container(
+              width: 152,
+              height: 44,
+              margin: EdgeInsets.only(top: 20),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/home', (route) => false);
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  'Explore Store',
+                  style: primaryTextStyle.copyWith(
+                    fontSize: 16,
+                    fontWeight: medium,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     Widget content() {
       return ListView(
         padding: EdgeInsets.symmetric(
           horizontal: deafultMargin,
         ),
-        children: [
-          CartCard(),
-        ],
+        children: cartProvider.carts
+            .map(
+              (cart) => CartCard(cart),
+            )
+            .toList(),
+        // children: [
+        //   CartCard(),
+        // ],
       );
     }
 
@@ -99,7 +107,7 @@ class CartPage extends StatelessWidget {
                     style: primaryTextStyle,
                   ),
                   Text(
-                    '\$287,96',
+                    '\$${cartProvider.totalPrice()}',
                     style: priceTextStyle.copyWith(
                       fontSize: 16,
                       fontWeight: semiBold,
@@ -163,8 +171,9 @@ class CartPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: backgroundColor3,
       appBar: header(),
-      body: content(),
-      bottomNavigationBar: customBottomNav(),
+      body: cartProvider.carts.length == 0 ? emptyCart() : content(),
+      bottomNavigationBar:
+          cartProvider.carts.length == 0 ? SizedBox() : customBottomNav(),
     );
   }
 }

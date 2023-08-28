@@ -11,13 +11,14 @@ import 'package:shamo_app_new/pages/sign_in_page.dart';
 import 'package:shamo_app_new/pages/sign_up_page.dart';
 import 'package:shamo_app_new/pages/spalsh_page.dart';
 import 'package:shamo_app_new/providers/auth_provider.dart';
+import 'package:shamo_app_new/providers/cart_provider.dart';
 import 'package:shamo_app_new/providers/product_provider.dart';
+import 'package:shamo_app_new/providers/wishlist_provider.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-// TES GIT
 class MyApp extends StatelessWidget {
   // const MyApp({ Key? key }) : super(key: key);
 
@@ -30,6 +31,12 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => ProductProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => WishlistProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => CartProvider(),
         ),
       ],
       child: MaterialApp(
