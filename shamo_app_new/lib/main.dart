@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shamo_app_new/pages/cart_page.dart';
@@ -13,9 +14,12 @@ import 'package:shamo_app_new/pages/spalsh_page.dart';
 import 'package:shamo_app_new/providers/auth_provider.dart';
 import 'package:shamo_app_new/providers/cart_provider.dart';
 import 'package:shamo_app_new/providers/product_provider.dart';
+import 'package:shamo_app_new/providers/transaction_provider.dart';
 import 'package:shamo_app_new/providers/wishlist_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -38,6 +42,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => CartProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => TransactionProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -46,7 +53,7 @@ class MyApp extends StatelessWidget {
           '/sign-in': (context) => SignInPage(),
           '/sign-up': (context) => SignUpPage(),
           '/home': (context) => MainPage(),
-          '/detail-chat': (context) => DetailChatPage(),
+          // '/detail-chat': (context) => DetailChatPage(),
           '/edit-profile': (context) => EditProfilePage(),
           // '/product': (context) => ProductPage(),
           '/cart': (context) => CartPage(),
