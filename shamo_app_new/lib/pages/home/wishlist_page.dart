@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shamo_app_new/providers/page_provider.dart';
 import 'package:shamo_app_new/providers/wishlist_provider.dart';
 import 'package:shamo_app_new/theme.dart';
 import 'package:shamo_app_new/widgets/wishlist_card.dart';
@@ -10,6 +11,7 @@ class WishlistPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WishlistProvider wishlistProvider = Provider.of<WishlistProvider>(context);
+    PageProvider pageProvider = Provider.of<PageProvider>(context);
 
     Widget header() {
       return AppBar(
@@ -67,7 +69,9 @@ class WishlistPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    pageProvider.currentIndex = 0;
+                  },
                   child: Text(
                     'Explore Store',
                     style: primaryTextStyle.copyWith(

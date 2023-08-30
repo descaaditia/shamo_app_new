@@ -13,6 +13,7 @@ import 'package:shamo_app_new/pages/sign_up_page.dart';
 import 'package:shamo_app_new/pages/spalsh_page.dart';
 import 'package:shamo_app_new/providers/auth_provider.dart';
 import 'package:shamo_app_new/providers/cart_provider.dart';
+import 'package:shamo_app_new/providers/page_provider.dart';
 import 'package:shamo_app_new/providers/product_provider.dart';
 import 'package:shamo_app_new/providers/transaction_provider.dart';
 import 'package:shamo_app_new/providers/wishlist_provider.dart';
@@ -44,6 +45,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => TransactionProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => PageProvider(),
         ),
       ],
       child: MaterialApp(

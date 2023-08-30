@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shamo_app_new/models/message_model.dart';
 import 'package:shamo_app_new/models/product_model.dart';
 import 'package:shamo_app_new/providers/auth_provider.dart';
 import 'package:shamo_app_new/services/message_service.dart';
@@ -195,22 +196,44 @@ class _DetailChatPageState extends State<DetailChatPage> {
     }
 
     Widget content() {
-      return ListView(
-        padding: EdgeInsets.symmetric(
-          horizontal: deafultMargin,
-        ),
-        children: [
-          ChatBubble(
-            isSender: true,
-            text: 'Hi, This item is still available?',
-            hasProduct: true,
-          ),
-          ChatBubble(
-            isSender: false,
-            text: 'Good night, This item is only available in size 42 and 43',
-          ),
-        ],
-      );
+      return StreamBuilder<List<MessageModel>>(
+          stream:
+              MessageService().getMessageByUserId(userId: authProvider.user.id),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: deafultMargin,
+                ),
+                children: snapshot.data
+                    .map(
+                      (MessageModel message) => ChatBubble(
+                        isSender: message.isFromUser,
+                        text: message.message,
+                        product: message.product,
+                      ),
+                      // print(message.message)
+                    )
+                    .toList(),
+                //     [
+                //   ChatBubble(
+                //     isSender: true,
+                //     text: 'Hi, This item is still available?',
+                //     hasProduct: true,
+                //   ),
+                //   ChatBubble(
+                //     isSender: false,
+                //     text:
+                //         'Good night, This item is only available in size 42 and 43',
+                //   ),
+                // ],
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          });
     }
 
     return Scaffold(

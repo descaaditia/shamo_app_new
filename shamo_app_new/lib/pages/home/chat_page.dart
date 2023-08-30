@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shamo_app_new/models/message_model.dart';
+import 'package:shamo_app_new/providers/auth_provider.dart';
+import 'package:shamo_app_new/providers/page_provider.dart';
+import 'package:shamo_app_new/services/message_service.dart';
 import 'package:shamo_app_new/theme.dart';
 import 'package:shamo_app_new/widgets/chat_tile.dart';
 
@@ -7,6 +12,9 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    PageProvider pageProvider = Provider.of<PageProvider>(context);
+
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -23,83 +31,99 @@ class ChatPage extends StatelessWidget {
       );
     }
 
-    Widget content() {
+    Widget emptyChat() {
       return Expanded(
         child: Container(
           color: backgroundColor3,
           width: double.infinity,
-          child: ListView(
-            padding: EdgeInsets.symmetric(
-              horizontal: deafultMargin,
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ChatTile(),
+              Image.asset(
+                'assets/icon_headset.png',
+                width: 80,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Opss no message yet?',
+                style: primaryTextStyle.copyWith(
+                  fontSize: 16,
+                  fontWeight: medium,
+                ),
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Text(
+                'You have never done a transaction',
+                style: secondaryTextStyle,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                height: 44,
+                child: TextButton(
+                  onPressed: () {
+                    pageProvider.currentIndex = 0;
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 10,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'Explore Store',
+                    style: primaryTextStyle.copyWith(
+                      fontSize: 16,
+                      fontWeight: medium,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       );
     }
 
-    // Widget emptyChat() {
-    //   return Expanded(
-    //     child: Container(
-    //       color: backgroundColor3,
-    //       width: double.infinity,
-    //       child: Column(
-    //         mainAxisAlignment: MainAxisAlignment.center,
-    //         children: [
-    //           Image.asset(
-    //             'assets/icon_headset.png',
-    //             width: 80,
-    //           ),
-    //           SizedBox(
-    //             height: 20,
-    //           ),
-    //           Text(
-    //             'Opss no message yet?',
-    //             style: primaryTextStyle.copyWith(
-    //               fontSize: 16,
-    //               fontWeight: medium,
-    //             ),
-    //           ),
-    //           SizedBox(
-    //             height: 12,
-    //           ),
-    //           Text(
-    //             'You have never done a transaction',
-    //             style: secondaryTextStyle,
-    //           ),
-    //           SizedBox(
-    //             height: 20,
-    //           ),
-    //           Container(
-    //             height: 44,
-    //             child: TextButton(
-    //               onPressed: () {},
-    //               style: TextButton.styleFrom(
-    //                 foregroundColor: primaryColor,
-    //                 padding: EdgeInsets.symmetric(
-    //                   horizontal: 24,
-    //                   vertical: 10,
-    //                 ),
-    //                 shape: RoundedRectangleBorder(
-    //                   borderRadius: BorderRadius.circular(12),
-    //                 ),
-    //               ),
-    //               child: Text(
-    //                 'Explore Store',
-    //                 style: primaryTextStyle.copyWith(
-    //                   fontSize: 16,
-    //                   fontWeight: medium,
-    //                 ),
-    //               ),
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   );
-    // }
+    Widget content() {
+      return StreamBuilder<List<MessageModel>>(
+          stream:
+              MessageService().getMessageByUserId(userId: authProvider.user.id),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data.length == 0) {
+                return emptyChat();
+              }
+              return Expanded(
+                child: Container(
+                  color: backgroundColor3,
+                  width: double.infinity,
+                  child: ListView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: deafultMargin,
+                    ),
+                    children: [
+                      ChatTile(
+                        snapshot.data[snapshot.data.length - 1],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              return emptyChat();
+            }
+          });
+    }
 
     return Column(
       children: [
